@@ -408,12 +408,24 @@ function login(email, password) {
 
 // 新規登録処理
 function register(email, password) {
+    const name = $('#registerName').val(); // 名前を取得
+
     if (!validateAuthInput(email, password, true)) return;
+    if (!name || !name.trim()) {
+        showMessage('名前を入力してください', 'error');
+        return;
+    }
 
     const button = $('#registerButton');
     button.prop('disabled', true);
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // displayNameを設定
+            return userCredential.user.updateProfile({
+                displayName: name
+            });
+        })
         .then(() => {
             showMessage('アカウントを作成しました');
             clearAuthForm();
@@ -425,6 +437,7 @@ function register(email, password) {
             button.prop('disabled', false);
         });
 }
+
 
 // ログアウト処理
 function logout() {
