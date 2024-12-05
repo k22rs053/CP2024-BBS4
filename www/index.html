@@ -153,6 +153,37 @@ function formatTimestamp(timestamp) {
         minute: '2-digit'
     });
 }
+function register(email, password) {
+    const name = $('#registerName').val(); // 名前を取得
+
+    if (!validateAuthInput(email, password, true)) return;
+    if (!name || !name.trim()) {
+        showMessage('名前を入力してください', 'error');
+        return;
+    }
+
+    const button = $('#registerButton');
+    button.prop('disabled', true);
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // displayNameを設定
+            return userCredential.user.updateProfile({
+                displayName: name
+            });
+        })
+        .then(() => {
+            showMessage('アカウントを作成しました');
+            clearAuthForm();
+        })
+        .catch((error) => {
+            showMessage(getAuthErrorMessage(error), 'error');
+        })
+        .finally(() => {
+            button.prop('disabled', false);
+        });
+}
+
 
 // 投稿の編集権限チェック
 function canEditPost(post) {
