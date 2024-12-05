@@ -167,6 +167,19 @@ function createPostElement(post) {
     const canEdit = canEditPost(post);
     // 編集権限があれば、編集・削除機能を表示
     const actions = canEdit ? `
+    <div class="post-footer">
+    <span class="post-time">
+        ${formatTimestamp(post.timestamp)}
+    </span>
+    <div class="post-likes">
+        <button class="btn-like ${post.likes && post.likes[currentUser?.uid] ? 'liked' : ''}" 
+                onclick="toggleLike('${post.id}')">
+            いいね
+        </button>
+        <span class="like-count">${post.likes ? Object.keys(post.likes).length : 0}</span>
+    </div>
+</div>
+
         <div class="post-actions">
             <button class="btn-edit" onclick="startEdit('${post.id}')">
                 編集
