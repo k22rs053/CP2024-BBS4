@@ -343,6 +343,30 @@ $(document).on('keydown', function(e) {
         });
     }
 });
+function toggleLike(postId) {
+    if (!currentUser) {
+        showMessage('いいねをするにはログインが必要です', 'error');
+        return;
+    }
+
+    const userId = currentUser.uid;
+    const likeRef = postsRef.child(`${postId}/likes/${userId}`);
+    
+    likeRef.once('value')
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                // いいねを取り消す
+                return likeRef.remove();
+            } else {
+                // いいねを追加
+                return likeRef.set(true);
+            }
+        })
+        .catch((error) => {
+            showMessage('いいねの操作に失敗しました: ' + error.message, 'error');
+        });
+}
+
 
 // 編集の開始
 function startEdit(postId) {
